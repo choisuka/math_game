@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>오늘의 날씨 & 문화 추천</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    font-family: 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
+    line-height: 1.7;
+    transition: background 1.2s ease, color 0.6s ease;
+    color: var(--text);
+    background: var(--bg);
+  }
+
+  /* ── Weather Themes ── */
+  body.clear        { --bg:#fef3c7; --bg2:#fef9c3; --primary:#d97706; --text:#78350f; --card:rgba(255,255,255,.82); }
+  body.partlyCloudy { --bg:#e0f2fe; --bg2:#bae6fd; --primary:#0284c7; --text:#0c4a6e; --card:rgba(255,255,255,.82); }
+  body.cloudy       { --bg:#e2e8f0; --bg2:#cbd5e1; --primary:#475569; --text:#1e293b; --card:rgba(255,255,255,.82); }
+  body.foggy        { --bg:#ecfdf5; --bg2:#d1fae5; --primary:#059669; --text:#064e3b; --card:rgba(255,255,255,.82); }
+  body.drizzle      { --bg:#dbeafe; --bg2:#bfdbfe; --primary:#2563eb; --text:#1e3a8a; --card:rgba(255,255,255,.82); }
+  body.rainy        { --bg:#c7d2fe; --bg2:#a5b4fc; --primary:#4f46e5; --text:#312e81; --card:rgba(255,255,255,.82); }
+  body.snowy        { --bg:#f0f9ff; --bg2:#e0f2fe; --primary:#0369a1; --text:#0c4a6e; --card:rgba(255,255,255,.88); }
+  body.thunderstorm { --bg:#1e1b4b; --bg2:#312e81; --primary:#a5b4fc; --text:#e0e7ff; --card:rgba(30,27,75,.75); }
+
+  /* ── Layout ── */
+  header { text-align:center; padding:2rem 1rem 1rem; }
+  header h1 { font-size:1.4rem; font-weight:800; color:var(--primary); }
+  header p  { font-size:.85rem; opacity:.7; margin-top:.2rem; }
+
+  .loc-bar { display:flex; justify-content:center; gap:.5rem; padding:.6rem 1rem; flex-wrap:wrap; }
+  .loc-bar input {
+    padding:.5rem 1rem; border:2px solid var(--primary); border-radius:8px;
+    font-size:.9rem; background:var(--card); color:var(--text); width:190px;
+  }
+  .loc-btn {
+    padding:.5rem 1rem; background:var(--primary); color:#fff; border:none;
+    border-radius:8px; cursor:pointer; font-size:.9rem; font-weight:600;
+  }
+  .loc-btn:hover { opacity:.85; }
+
+  main { max-width:720px; margin:0 auto; padding:1rem 1rem 3rem; }
+
+  #loading { text-align:center; padding:3rem; font-size:1.1rem; color:var(--primary); }
+  #err-box { text-align:center; padding:1.5rem; }
+  .err-btn { margin-top:.6rem; padding:.4rem .9rem; background:#dc2626; color:#fff; border:none; border-radius:6px; cursor:pointer; }
+
+  /* ── Weather Card ── */
+  .weather-card {
+    background:var(--card); backdrop-filter:blur(12px);
+    border-radius:20px; padding:1.4rem 1.6rem; margin-bottom:1.4rem;
+    box-shadow:0 4px 24px rgba(0,0,0,.1);
+    display:flex; align-items:center; gap:1.4rem;
+  }
+  .w-emoji { font-size:4.2rem; flex-shrink:0; }
+  .w-loc   { font-size:.85rem; opacity:.65; margin-bottom:.2rem; }
+  .w-temp  { font-size:2rem; font-weight:700; }
+  .w-desc  { font-size:1rem; font-weight:600; margin-top:.15rem; }
+  .w-meta  { display:flex; gap:1rem; font-size:.82rem; margin-top:.4rem; opacity:.7; }
+
+  /* ── Content Cards ── */
+  .card {
+    background:var(--card); backdrop-filter:blur(10px);
+    border-radius:16px; padding:1.3rem; margin-bottom:1.2rem;
+    box-shadow:0 3px 18px rgba(0,0,0,.08);
+  }
+  .card-head {
+    display:flex; align-items:center; gap:.5rem;
+    font-size:1rem; font-weight:700; color:var(--primary);
+    border-bottom:2px solid var(--primary); padding-bottom:.5rem; margin-bottom:.9rem;
+  }
+
+  /* Music */
+  .music-title  { font-weight:700; font-size:.95rem; margin-bottom:.15rem; }
+  .music-reason { font-size:.82rem; opacity:.65; margin-bottom:.7rem; }
+  .yt-wrap { position:relative; width:100%; padding-top:56.25%; border-radius:10px; overflow:hidden; }
+  .yt-wrap iframe { position:absolute; inset:0; width:100%; height:100%; border:none; }
+  .yt-link { display:inline-block; margin-top:.5rem; font-size:.82rem; color:var(--primary); text-decoration:none; }
+  .yt-link:hover { text-decoration:underline; }
+
+  /* Poem */
+  .poem-meta { font-size:.8rem; opacity:.6; margin-bottom:.5rem; }
+  .poem-text {
+    white-space:pre-line; font-family:'Malgun Gothic','Apple SD Gothic Neo',serif;
+    font-size:.93rem; line-height:2; padding:.8rem 1rem;
+    background:rgba(0,0,0,.04); border-radius:8px; border-left:3px solid var(--primary);
+  }
+
+  /* Painting */
+  .paint-img { width:100%; border-radius:10px; margin-bottom:.6rem; display:block; }
+  .paint-title  { font-weight:700; font-size:.95rem; }
+  .paint-info   { font-size:.82rem; opacity:.65; margin-top:.2rem; }
+  .paint-desc   { font-size:.87rem; margin-top:.4rem; }
+
+  /* Places */
+  .place-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:.7rem; }
+  .place-item { background:rgba(0,0,0,.05); border-radius:10px; padding:.75rem; }
+  .place-icon { font-size:1.4rem; margin-bottom:.2rem; }
+  .place-name { font-weight:700; font-size:.9rem; }
+  .place-desc { font-size:.78rem; opacity:.65; margin-top:.2rem; }
+
+  /* Books */
+  .book-item { background:rgba(0,0,0,.05); border-radius:10px; padding:.8rem; margin-bottom:.6rem; }
+  .book-title  { font-weight:700; font-size:.92rem; }
+  .book-author { font-size:.78rem; opacity:.6; }
+  .book-reason { font-size:.85rem; margin-top:.25rem; }
+
+  /* Jobs */
+  .job-sel {
+    width:100%; padding:.5rem; border:2px solid var(--primary);
+    border-radius:8px; background:var(--card); color:var(--text);
+    font-size:.9rem; margin-bottom:.8rem; cursor:pointer;
+  }
+  .job-list { list-style:none; }
+  .job-list li { padding:.45rem 0; border-bottom:1px solid rgba(0,0,0,.06); font-size:.9rem; }
+  .job-list li::before { content:'✅ '; }
+  .job-list li:last-child { border-bottom:none; }
+</style>
+</head>
+<body class="clear">
+
+<header>
+  <h1>🌤 오늘의 날씨 & 문화 추천</h1>
+  <p>날씨에 맞는 음악 · 시 · 그림 · 장소 · 책 · 활동을 제안합니다</p>
+</header>
+
+<div class="loc-bar">
+  <button class="loc-btn" onclick="getGeo()">📍 내 위치</button>
+  <input type="text" id="city-input" placeholder="도시 이름 (예: 서울)" onkeyup="if(event.key==='Enter')searchCity()">
+  <button class="loc-btn" onclick="searchCity()">검색</button>
+</div>
+
+<main>
+  <div id="loading">📡 위치를 확인하는 중...</div>
+  <div id="err-box" style="display:none"></div>
+
+  <!-- Weather -->
+  <div id="weather-card" class="weather-card" style="display:none">
+    <div class="w-emoji" id="w-emoji">☀️</div>
+    <div>
+      <div class="w-loc"  id="w-loc">-</div>
+      <div class="w-temp" id="w-temp">--°C</div>
+      <div class="w-desc" id="w-desc">-</div>
+      <div class="w-meta">
+        <span id="w-hum">💧 -</span>
+        <span id="w-wind">💨 -</span>
+        <span id="w-time" style="opacity:.45"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Music -->
+  <div id="music-card" class="card" style="display:none">
+    <div class="card-head">🎵 오늘의 음악</div>
+    <div class="music-title"  id="music-title"></div>
+    <div class="music-reason" id="music-reason"></div>
+    <div class="yt-wrap"><iframe id="yt-frame" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+    <a id="yt-link" class="yt-link" target="_blank" rel="noopener">▶ YouTube에서 검색하기</a>
+  </div>
+
+  <!-- Poem -->
+  <div id="poem-card" class="card" style="display:none">
+    <div class="card-head">📜 오늘의 시</div>
+    <div class="poem-meta" id="poem-meta"></div>
+    <div class="poem-text"  id="poem-text"></div>
+  </div>
+
+  <!-- Painting -->
+  <div id="paint-card" class="card" style="display:none">
+    <div class="card-head">🖼️ 오늘의 그림</div>
+    <img id="paint-img" class="paint-img" alt="오늘의 그림" loading="lazy">
+    <div class="paint-title" id="paint-title"></div>
+    <div class="paint-info"  id="paint-info"></div>
+    <div class="paint-desc"  id="paint-desc"></div>
+  </div>
+
+  <!-- Places -->
+  <div id="place-card" class="card" style="display:none">
+    <div class="card-head">📍 갈 수 있는 곳</div>
+    <div id="place-grid" class="place-grid"></div>
+  </div>
+
+  <!-- Books -->
+  <div id="book-card" class="card" style="display:none">
+    <div class="card-head">📚 읽으면 좋은 책</div>
+    <div id="book-list"></div>
+  </div>
+
+  <!-- Jobs -->
+  <div id="job-card" class="card" style="display:none">
+    <div class="card-head">💼 직업별 오늘 할 수 있는 일</div>
+    <select class="job-sel" id="job-sel" onchange="renderJobs()">
+      <option value="student">🎓 학생</option>
+      <option value="office">💻 직장인</option>
+      <option value="home">🏠 주부·부모</option>
+      <option value="retired">🌿 은퇴자·시니어</option>
+      <option value="freelance">🖥️ 프리랜서·재택근무</option>
+      <option value="artist">🎨 크리에이터·예술가</option>
+    </select>
+    <ul id="job-list" class="job-list"></ul>
+  </div>
+</main>
+
+<script>
+// ══════════════════════════════════════════
+//  CONTENT DATABASE
+// ══════════════════════════════════════════
+const DB = {
+  clear: {
+    name:'맑음', emoji:'☀️', cls:'clear',
+    music:{
+      title:'사계 — 봄 1악장 (Vivaldi)',
+      artist:'Vivaldi',
+      yt:'GRxofEmo3HA',
+      search:'Vivaldi Four Seasons Spring classical',
+      reason:'봄날 햇살처럼 생동감 넘치는 선율. 자연의 기쁨이 활로 담겨 있습니다.'
+    },
+    poem:{
+      meta:'이장희 「봄은 고양이로다」 · 1924',
+      text:`꽃가루와 같이 부드러운 고양이의 털에
+고운 봄의 향기가 어리우도다.
+
+금방울과 같이 호동그란 고양이의 눈에
+미친 봄의 불길이 흐르도다.
+
+고요히 다물은 고양이의 입술에
+포근한 봄 졸음이 떠돌아라.
+
+날카롭게 쭉 뻗은 고양이의 수염에
+푸른 봄의 생기가 뛰놀아라.`
+    },
+    art:{
+      title:'그랑드 자트 섬의 일요일 오후',
+      info:'조르주 쇠라 · 1886 · 시카고 미술관',
+      desc:'점묘법으로 그린 빛의 향연. 맑은 날 강가에서 휴식하는 파리 시민들.',
+      img:'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/A_Sunday_on_La_Grande_Jatte%2C_Georges_Seurat%2C_1884.jpg/800px-A_Sunday_on_La_Grande_Jatte%2C_Georges_Seurat%2C_1884.jpg'
+    },
+    places:[
+      {i:'🌸',n:'공원 산책',d:'맑은 하늘 아래 천천히 걷는 힐링'},
+      {i:'☕',n:'야외 카페 테라스',d:'커피 한 잔과 책, 햇살 아래 앉아'},
+      {i:'🌿',n:'식물원·수목원',d:'초록과 꽃이 가득한 힐링 공간'},
+      {i:'🔭',n:'전망대',d:'맑은 날 멀리까지 보이는 조망 명소'}
+    ],
+    books:[
+      {t:'월든',a:'헨리 데이비드 소로',r:'자연 속 단순한 삶의 아름다움'},
+      {t:'어린 왕자',a:'앙투안 드 생텍쥐페리',r:'맑은 날 어울리는 순수한 감성'},
+      {t:'나미야 잡화점의 기적',a:'히가시노 게이고',r:'햇살처럼 따뜻한 감동 이야기'}
+    ],
+    jobs:{
+      student:['카페 테라스나 공원에서 공부해 보기','친구들과 야외 점심 후 공원 복습','오늘 배운 내용을 걸으며 혼자 정리'],
+      office:['점심시간 15분 바깥 산책 (집중력·창의력 향상)','창가 자리에서 오후 업무','퇴근 후 동네 30분 조깅'],
+      home:['오전 재래시장에서 신선한 식재료 구매','아이들과 공원 나들이','베란다 화분에 물 주고 환기'],
+      retired:['아침 공원 걷기 30분','지인과 점심 약속','오후 도서관 독서'],
+      freelance:['노트북 들고 카페 야외석에서 작업','오전 집중 → 오후 외출로 환기','새 동네 탐방하며 영감 찾기'],
+      artist:['스케치북 들고 공원에서 야외 스케치','빛이 아름다운 오후 사진 촬영','열린 전시회나 갤러리 관람']
+    }
+  },
+
+  partlyCloudy: {
+    name:'구름 조금', emoji:'🌤️', cls:'partlyCloudy',
+    music:{
+      title:'G선상의 아리아 (Bach, Air on G String)',
+      artist:'J.S. Bach',
+      yt:'GMkmQlfOJDk',
+      search:'Bach Air on G String classical orchestra',
+      reason:'고요하고 평온한 선율. 흘러가는 구름처럼 마음이 편안해집니다.'
+    },
+    poem:{
+      meta:'정지용 「향수」 · 1927',
+      text:`넓은 벌 동쪽 끝으로
+옛이야기 지줄대는 실개천이 휘돌아 나가고,
+얼룩배기 황소가
+해설피 금빛 게으른 울음을 우는 곳,
+
+— 그곳이 차마 꿈엔들 잊힐리야.
+
+질화로에 재가 식어지면
+뷔인 밭에 밤바람 소리 말을 달리고,
+엷은 조름에 겨운 늙으신 아버지가
+짚 베개를 돋아 고이시는 곳,
+
+— 그곳이 차마 꿈엔들 잊힐리야.`
+    },
+    art:{
+      title:'건초 수레 (The Hay Wain)',
+      info:'존 컨스터블 · 1821 · 내셔널 갤러리, 런던',
+      desc:'여름 구름 아래 영국 시골의 평화로운 풍경. 빛과 공기를 그린 낭만주의 걸작.',
+      img:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/John_Constable_-_The_Hay_Wain_%281821%29.jpg/800px-John_Constable_-_The_Hay_Wain_%281821%29.jpg'
+    },
+    places:[
+      {i:'🖼️',n:'미술관',d:'구름 낀 날 실내에서 예술 감상'},
+      {i:'📚',n:'독립 서점',d:'골목의 작은 서점에서 책 탐방'},
+      {i:'🏘️',n:'동네 골목 탐방',d:'익숙한 곳을 다른 눈으로 걷기'},
+      {i:'🍵',n:'전통 찻집',d:'조용한 찻집에서 차 한 잔'}
+    ],
+    books:[
+      {t:'채식주의자',a:'한강',r:'변화하는 내면 세계 탐구'},
+      {t:'노인과 바다',a:'헤밍웨이',r:'간결하고 강렬한 삶의 이야기'},
+      {t:'무소유',a:'법정',r:'비움과 자유에 대한 사유'}
+    ],
+    jobs:{
+      student:['도서관에서 심화 공부','선생님께 질문 리스트 작성','어려운 과목에 도전하기 좋은 날'],
+      office:['중요한 보고서 마무리','팀원들과 아이디어 브레인스토밍','미루던 업무 하나 완료하기'],
+      home:['집 안 정리정돈 하루 프로젝트','새 요리 레시피 도전','아이 숙제 함께 봐주기'],
+      retired:['오전 스트레칭 + 가벼운 산책','서예·캘리그라피 수업','손주에게 편지 쓰기'],
+      freelance:['새 프로젝트 기획 브레인스토밍','포트폴리오 업데이트','온라인 네트워킹 미팅'],
+      artist:['작업실에서 새 작품 시작','SNS 콘텐츠 기획·제작','포트폴리오 재정비']
+    }
+  },
+
+  cloudy: {
+    name:'흐림', emoji:'☁️', cls:'cloudy',
+    music:{
+      title:'짐노페디 1번 (Gymnopédie No.1)',
+      artist:'에릭 사티 (Erik Satie)',
+      yt:'S-Xm7s9eGxU',
+      search:'Satie Gymnopédie No 1 piano classical',
+      reason:'몽환적이고 고요한 선율. 흐린 날의 내면을 조용히 들여다보게 합니다.'
+    },
+    poem:{
+      meta:'윤동주 「서시」 · 1941',
+      text:`죽는 날까지 하늘을 우러러
+한 점 부끄럼이 없기를,
+잎새에 이는 바람에도
+나는 괴로워했다.
+
+별을 노래하는 마음으로
+모든 죽어가는 것을 사랑해야지
+그리고 나한테 주어진 길을
+걸어가야겠다.
+
+오늘 밤에도 별이 바람에 스치운다.`
+    },
+    art:{
+      title:'안개 바다 위의 방랑자',
+      info:'카스파르 다비트 프리드리히 · 1818 · 함부르크 미술관',
+      desc:'흐린 날 산 정상에서 안개 낀 세계를 바라보는 한 인간. 고독과 숭고함의 낭만주의 걸작.',
+      img:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Caspar_David_Friedrich_-_Wanderer_above_the_sea_of_fog.jpg/600px-Caspar_David_Friedrich_-_Wanderer_above_the_sea_of_fog.jpg'
+    },
+    places:[
+      {i:'📖',n:'도서관',d:'조용한 도서관에서 깊이 읽기'},
+      {i:'☕',n:'실내 카페',d:'따뜻한 음료와 함께 사색'},
+      {i:'🏛️',n:'박물관',d:'역사와 문화를 탐험하는 하루'},
+      {i:'🎬',n:'영화관',d:'평일 낮 한산한 영화관 감상'}
+    ],
+    books:[
+      {t:'데미안',a:'헤르만 헤세',r:'자아를 찾는 내면의 여정'},
+      {t:'노르웨이의 숲',a:'무라카미 하루키',r:'흐린 날 어울리는 감성적 서사'},
+      {t:'인간 실격',a:'다자이 오사무',r:'인간 내면의 깊은 성찰'}
+    ],
+    jobs:{
+      student:['깊이 생각하는 공부 — 수학·논술에 집중','자기 생각을 글로 쓰는 연습','혼자만의 공부 루틴 점검'],
+      office:['복잡한 문제를 조용히 혼자 생각하기','장기 계획 수립','이메일·문서 정리'],
+      home:['조용히 책 읽는 오전','밀린 가계부 정리','좋아하는 드라마 정주행'],
+      retired:['회고록·일기 쓰기','가족에게 전화하기','취미 수공예 작업'],
+      freelance:['집중 작업에 최적인 날','장기 프로젝트 계획','학습·자기계발 강의 수강'],
+      artist:['내면 세계를 표현하는 작품 작업','일기·영감 노트 정리','새로운 기법 실험']
+    }
+  },
+
+  foggy: {
+    name:'안개', emoji:'🌫️', cls:'foggy',
+    music:{
+      title:'클레르 드 룬 (Clair de Lune)',
+      artist:'드뷔시 (Debussy)',
+      yt:'CDdvReNKKuk',
+      search:'Debussy Clair de Lune piano classical',
+      reason:'몽롱하고 신비로운 안개 속 분위기. 달빛처럼 부드럽게 흐르는 인상주의 피아노 명곡.'
+    },
+    poem:{
+      meta:'정지용 「유리창 1」 · 1930',
+      text:`유리(琉璃)에 차고 슬픈 것이 어른거린다.
+열없이 붙어서서 입김을 흐리우니
+길들은 양 언 날개를 파다거린다.
+지우고 보고 지우고 보아도
+새까만 밤이 밀려나가고 밀려와 부디치고,
+물 먹은 별이, 반짝, 보석처럼 박힌다.
+뒤척이며 죽어 울었다가
+창 밖에 밤비가 속살거려.`
+    },
+    art:{
+      title:'전함 테메레르의 마지막 항해',
+      info:'J.M.W. 터너 · 1839 · 내셔널 갤러리, 런던',
+      desc:'안개와 빛이 뒤섞인 강. 증기선에 이끌려 마지막 항해를 하는 노 전함. 시간의 무상함.',
+      img:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/The_Fighting_Temeraire%2C_JMW_Turner%2C_National_Gallery.jpg/800px-The_Fighting_Temeraire%2C_JMW_Turner%2C_National_Gallery.jpg'
+    },
+    places:[
+      {i:'♨️',n:'찜질방·온천',d:'따뜻하게 몸 녹이기 좋은 날'},
+      {i:'📖',n:'집에서 독서',d:'안개 낀 창 밖 보며 책 읽기'},
+      {i:'🖼️',n:'소규모 갤러리',d:'조용한 갤러리에서 감상'},
+      {i:'🍜',n:'따뜻한 국물 맛집',d:'안개 낀 날엔 뜨거운 국물 한 그릇'}
+    ],
+    books:[
+      {t:'설국',a:'가와바타 야스나리',r:'안개와 눈이 가득한 몽환적 세계 (노벨문학상)'},
+      {t:'참을 수 없는 존재의 가벼움',a:'밀란 쿤데라',r:'삶의 불확실성에 대한 철학적 소설'},
+      {t:'연금술사',a:'파울로 코엘료',r:'안개 속에서도 자기 꿈을 따르는 이야기'}
+    ],
+    jobs:{
+      student:['실내에서 차분하게 암기 과목 정리','개념 정리 노트 작성','스터디 플래너 업데이트'],
+      office:['운전 시 안개 주의 (대중교통 권장)','재택근무 시 집중 작업의 날','내부 제안서·보고서 작성'],
+      home:['따뜻한 국 끓여 가족 챙기기','집 안 습도 관리','안전한 실내 활동으로 아이와 시간'],
+      retired:['빙판·안개 주의 — 실내 스트레칭','좋아하는 TV 프로그램 시청','요리 연습'],
+      freelance:['집 작업 최적의 날','오디오북 들으며 작업','온라인 강의·자격증 공부'],
+      artist:['안개에서 영감 받은 수채화','모노크롬 작품 도전','음악 들으며 드로잉']
+    }
+  },
+
+  drizzle: {
+    name:'이슬비', emoji:'🌦️', cls:'drizzle',
+    music:{
+      title:'야상곡 20번 c단조 (Nocturne No.20)',
+      artist:'쇼팽 (Chopin)',
+      yt:'9E6b3swbnWg',
+      search:'Chopin Nocturne No 20 piano classical',
+      reason:'이슬비처럼 서정적인 피아노. 빗소리와 함께 들으면 더욱 감미롭습니다.'
+    },
+    poem:{
+      meta:'이상화 「빼앗긴 들에도 봄은 오는가」 · 1926',
+      text:`지금은 남의 땅 — 빼앗긴 들에도 봄은 오는가?
+
+나는 온몸에 풋내를 띠고,
+푸른 웃음 푸른 설움이 어우러진 사이로
+다리를 절며 하루를 걷는다. 아마도 봄 신명이 지폈나 보다.
+
+그러나 지금은 — 들을 빼앗겨 봄조차 빼앗기겠네.`
+    },
+    art:{
+      title:'우산들 (The Umbrellas)',
+      info:'피에르-오귀스트 르누아르 · 1886 · 내셔널 갤러리, 런던',
+      desc:'이슬비 내리는 파리 거리. 우산을 든 사람들의 색채 가득한 인상주의 풍경.',
+      img:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Renoir_The_Umbrellas.jpg/600px-Renoir_The_Umbrellas.jpg'
+    },
+    places:[
+      {i:'☕',n:'분위기 좋은 카페',d:'창 밖 빗소리 들으며 커피와 책'},
+      {i:'🎬',n:'영화관',d:'낮에 한산한 영화관에서 영화 한 편'},
+      {i:'🍕',n:'맛집 탐방',d:'미뤄뒀던 실내 맛집 방문'},
+      {i:'💆',n:'마사지·스파',d:'몸과 마음의 긴장을 풀어주는 시간'}
+    ],
+    books:[
+      {t:'아몬드',a:'손원평',r:'감정을 느끼지 못하는 소년의 성장기'},
+      {t:'멈추면 비로소 보이는 것들',a:'혜민 스님',r:'바쁜 일상 속 잠시 멈춤의 가르침'},
+      {t:'82년생 김지영',a:'조남주',r:'공감과 성찰을 일으키는 현대 이야기'}
+    ],
+    jobs:{
+      student:['카페에서 공부 (배경 소음이 집중에 도움)','영어 듣기 집중 훈련','인터넷 강의 몰아보기'],
+      office:['창가 자리에서 집중 업무','재택근무 시 생산성 높이기','오늘의 업무 목록 꼼꼼히 완수'],
+      home:['빗소리 들으며 집 청소','따뜻한 국·찌개 만들기','아이와 보드게임'],
+      retired:['실내 취미 (뜨개질·수채화·독서)','라디오 청취','가족 사진 정리'],
+      freelance:['집 작업의 날 — 창 밖 빗소리가 집중력 높임','미루던 이메일 처리','새 프로젝트 리서치'],
+      artist:['수채화 — 번짐 효과 실험','시·수필 쓰기','음악 들으며 창작']
+    }
+  },
+
+  rainy: {
+    name:'비', emoji:'🌧️', cls:'rainy',
+    music:{
+      title:'첼로 모음곡 1번 전주곡 (Bach Cello Suite No.1)',
+      artist:'J.S. Bach / Yo-Yo Ma',
+      yt:'1prweT95Mo0',
+      search:'Bach Cello Suite No 1 Prelude Yo-Yo Ma',
+      reason:'비가 내리는 날, 첼로의 깊은 울림이 마음 깊은 곳을 위로합니다.'
+    },
+    poem:{
+      meta:'김소월 「진달래꽃」 · 1922',
+      text:`나 보기가 역겨워
+가실 때에는
+말없이 고이 보내 드리오리다.
+
+영변에 약산
+진달래꽃
+아름 따다 가실 길에 뿌리오리다.
+
+가시는 걸음걸음
+놓인 그 꽃을
+사뿐히 즈려밟고 가시옵소서.
+
+나 보기가 역겨워
+가실 때에는
+죽어도 아니 눈물 흘리오리다.`
+    },
+    art:{
+      title:'파리 거리, 빗속에 (Paris Street; Rainy Day)',
+      info:'귀스타브 카유보트 · 1877 · 시카고 미술관',
+      desc:'우산을 든 파리 시민들이 오스만 대로를 걷는 사실적 풍경. 비 오는 도시의 정수.',
+      img:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Gustave_Caillebotte_-_Paris_Street%3B_Rainy_Day_-_Google_Art_Project.jpg/800px-Gustave_Caillebotte_-_Paris_Street%3B_Rainy_Day_-_Google_Art_Project.jpg'
+    },
+    places:[
+      {i:'🏠',n:'집에서 쉬기',d:'비 오는 날 집만큼 편한 곳은 없습니다'},
+      {i:'📚',n:'도서관·서점',d:'빗소리 들으며 책에 빠져들기'},
+      {i:'🎵',n:'음악감상실·재즈바',d:'좋은 음악을 제대로 감상하는 날'},
+      {i:'🍲',n:'오래 끓이는 요리 도전',d:'갈비찜·사골국·수제비 만들기'}
+    ],
+    books:[
+      {t:'파친코',a:'이민진',r:'비처럼 무겁고 강렬한 역사 소설'},
+      {t:'소년이 온다',a:'한강',r:'비 내리는 날 읽어야 할 깊은 이야기'},
+      {t:'죄와 벌',a:'도스토옙스키',r:'비 오는 날 내면으로 떠나는 긴 여행'}
+    ],
+    jobs:{
+      student:['집에서 인강+문제 풀이에 집중','노트 필기 정리 + 오답 복습','오늘 배울 분량 계획 후 실천'],
+      office:['재택근무 최적의 날','화상 회의 준비 철저히','중요 문서 집중 작업'],
+      home:['빗소리와 함께 집 안 대청소','가족을 위한 따뜻한 국 끓이기','좋아하는 드라마 정주행'],
+      retired:['실내 활동 위주 (빗길 낙상 주의)','따뜻한 물에 발 담그기','지인에게 안부 문자'],
+      freelance:['비 오는 날 집중력이 최고 — 어려운 과제 완수','다음 달 업무 계획 수립','온라인 강의·자기계발'],
+      artist:['빗소리에 영감을 받아 창작','수채화·먹그림 도전','나만의 음악 플레이리스트 만들기']
+    }
+  },
+
+  snowy: {
+    name:'눈', emoji:'❄️', cls:'snowy',
+    music:{
+      title:'나와 나타샤와 흰 당나귀 — 피아노 소품',
+      artist:'Vivaldi / 사계 — 겨울 (대안)',
+      yt:'TZCfydWF48c',
+      search:'Vivaldi Four Seasons Winter classical',
+      reason:'눈 내리는 날의 고요함과 겨울의 아름다움. 차갑고 아름다운 바이올린 협주곡.'
+    },
+    poem:{
+      meta:'백석 「나와 나타샤와 흰 당나귀」 · 1938',
+      text:`가난한 내가
+아름다운 나타샤를 사랑해서
+오늘밤은 푹푹 눈이 나린다
+
+나타샤를 사랑은 하고
+눈은 푹푹 날리고
+나는 혼자 쓸쓸히 앉아 소주를 마신다
+소주를 마시며 생각한다
+나타샤와 나는
+눈이 푹푹 쌓이는 밤 흰 당나귀 타고
+산골로 가자 출출이 우는 깊은 산골로 가 마가리에 살자`
+    },
+    art:{
+      title:'눈 속의 사냥꾼 (Hunters in the Snow)',
+      info:'피터르 브뤼헐 · 1565 · 빈 미술사 박물관',
+      desc:'눈 덮인 플랑드르 마을. 사냥꾼들이 돌아오고 마을 사람들은 얼음판을 지친다. 겨울의 서사시.',
+      img:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Pieter_Bruegel_the_Elder_-_Hunters_in_the_Snow_%28Winter%29_-_Google_Art_Project.jpg/800px-Pieter_Bruegel_the_Elder_-_Hunters_in_the_Snow_%28Winter%29_-_Google_Art_Project.jpg'
+    },
+    places:[
+      {i:'⛄',n:'설경 명소·공원',d:'눈 덮인 산책로 걷기 (미끄럼 주의)'},
+      {i:'♨️',n:'온천·찜질방',d:'눈 구경하며 따뜻하게 몸 녹이기'},
+      {i:'🎿',n:'스키장·눈썰매장',d:'겨울 스포츠를 즐기는 날'},
+      {i:'🏠',n:'집에서 따뜻하게',d:'핫초코와 함께 창 밖 설경 감상'}
+    ],
+    books:[
+      {t:'설국',a:'가와바타 야스나리',r:'눈 덮인 세계를 배경으로 한 노벨문학상 작품'},
+      {t:'나니아 연대기',a:'C.S. 루이스',r:'눈 속의 마법 세계로 떠나는 판타지'},
+      {t:'크리스마스 캐럴',a:'찰스 디킨스',r:'눈 오는 겨울에 읽어야 할 고전'}
+    ],
+    jobs:{
+      student:['눈 구경하며 실내에서 공부','따뜻한 음료와 함께 수험서 정리','집에서 인강 마라톤'],
+      office:['눈길·빙판 조심 (대중교통 이용 권장)','재택근무 가능하다면 오늘 활용','따뜻한 사무실에서 계획 수립'],
+      home:['아이들과 눈사람 만들기','핫초코 만들어 가족 챙기기','실내 보드게임·퍼즐'],
+      retired:['빙판길 낙상 주의 — 실내 위주','따뜻한 실내에서 스트레칭','손주들과 화상통화'],
+      freelance:['집에서 작업 — 눈 오는 날 최고의 환경','창의적 영감이 가득한 날','장기 기획·아이디어 정리'],
+      artist:['눈 내리는 풍경 스케치 또는 사진','수묵화·한국화 도전','겨울 감성 시 쓰기']
+    }
+  },
+
+  thunderstorm: {
+    name:'천둥번개', emoji:'⛈️', cls:'thunderstorm',
+    music:{
+      title:'교향곡 5번 c단조 「운명」 (Symphony No.5)',
+      artist:'베토벤 / 카를로스 클라이버',
+      yt:'_4IRMYuE1hI',
+      search:'Beethoven Symphony No 5 Fate Carlos Kleiber',
+      reason:'"운명"이 문을 두드리는 소리. 천둥번개처럼 강렬하고 극적인 베토벤의 걸작.'
+    },
+    poem:{
+      meta:'이육사 「광야」 · 1945',
+      text:`까마득한 날에
+하늘이 처음 열리고
+어디 닭 우는 소리 들렸으랴.
+
+모든 산맥들이
+바다를 연모해 휘달릴 때도
+차마 이 곳을 범하던 못하였으리라.
+
+지금 눈 내리고
+매화 향기 홀로 아득하니
+내 여기 가난한 노래의 씨를 뿌려라.
+
+다시 천고(千古)의 뒤에
+백마 타고 오는 초인이 있어
+이 광야에서 목 놓아 부르게 하리라.`
+    },
+    art:{
+      title:'가나가와 해변의 큰 파도',
+      info:'가쓰시카 호쿠사이 · 1831 · 메트로폴리탄 미술관',
+      desc:'거대한 파도 앞에 선 작은 배들. 자연의 압도적인 힘과 인간의 작음을 대비시킨 우키요에 걸작.',
+      img:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Great_Wave_off_Kanagawa2.jpg/800px-Great_Wave_off_Kanagawa2.jpg'
+    },
+    places:[
+      {i:'🏠',n:'집에서 안전하게',d:'천둥번개 때는 외출보다 실내가 최선'},
+      {i:'🎬',n:'영화 마라톤',d:'보고 싶었던 영화 여러 편 연속 감상'},
+      {i:'🍳',n:'요리 도전',d:'평소 어려웠던 요리를 오늘 만들어 보기'},
+      {i:'🎮',n:'게임·취미',d:'오래 미뤄온 취미 활동에 집중'}
+    ],
+    books:[
+      {t:'폭풍의 언덕',a:'에밀리 브론테',r:'폭풍처럼 격렬한 사랑과 복수의 서사'},
+      {t:'모비딕',a:'허먼 멜빌',r:'바다와 폭풍, 집착과 운명의 서사시'},
+      {t:'1984',a:'조지 오웰',r:'어둡고 강렬한 날에 어울리는 디스토피아'}
+    ],
+    jobs:{
+      student:['외출 자제 — 집에서 공부','몰아서 인강 시청','어려운 단원 집중 정복의 날'],
+      office:['재택근무 적극 활용','화상 회의로 업무 진행','낙뢰 주의 — 안전한 실내 유지'],
+      home:['아이들과 실내 활동','가족 영화 관람','천둥을 아이에게 과학으로 설명'],
+      retired:['절대 외출 금지 (낙뢰 위험)','실내 스트레칭·체조','오래된 사진 앨범 정리'],
+      freelance:['파워풀한 날 — 큰 마감 프로젝트 완수','집중 작업 세션 3~4시간','아이디어 노트 총정리'],
+      artist:['폭풍에서 영감 받은 강렬한 작품 제작','추상화·콜라주 시도','음악 들으며 즉흥 창작']
+    }
+  }
+};
+
+// ══════════════════════════════════════════
+//  STATE & HELPERS
+// ══════════════════════════════════════════
+let curCond = 'clear';
+
+function getCondition(code) {
+  if (code <= 1) return 'clear';
+  if (code === 2) return 'partlyCloudy';
+  if (code === 3) return 'cloudy';
+  if (code === 45 || code === 48) return 'foggy';
+  if (code >= 51 && code <= 57) return 'drizzle';
+  if ([61,63,65,80,81,82].includes(code)) return 'rainy';
+  if ([71,73,75,85,86,77].includes(code)) return 'snowy';
+  if (code >= 95) return 'thunderstorm';
+  return 'partlyCloudy';
+}
+
+function show(id) { document.getElementById(id).style.display=''; }
+function hide(id) { document.getElementById(id).style.display='none'; }
+function el(id)   { return document.getElementById(id); }
+
+// ══════════════════════════════════════════
+//  FETCH
+// ══════════════════════════════════════════
+async function fetchWeather(lat, lon) {
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}`
+    + `&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m`
+    + `&timezone=auto&wind_speed_unit=kmh`;
+  const r = await fetch(url);
+  return (await r.json()).current;
+}
+
+async function reverseGeo(lat, lon) {
+  try {
+    const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&accept-language=ko`);
+    const j = await r.json();
+    return j.address?.city || j.address?.county || j.address?.state || '알 수 없는 위치';
+  } catch { return '현재 위치'; }
+}
+
+// ══════════════════════════════════════════
+//  ENTRY POINTS
+// ══════════════════════════════════════════
+function getGeo() {
+  if (!navigator.geolocation) { showErr('이 브라우저는 위치 서비스를 지원하지 않습니다.'); return; }
+  showLoading();
+  navigator.geolocation.getCurrentPosition(
+    async pos => {
+      const { latitude: lat, longitude: lon } = pos.coords;
+      const city = await reverseGeo(lat, lon);
+      await load(lat, lon, city);
+    },
+    () => load(37.5665, 126.9780, '서울')
+  );
+}
+
+async function searchCity() {
+  const city = el('city-input').value.trim();
+  if (!city) return;
+  showLoading();
+  try {
+    const r = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=ko&format=json`);
+    const j = await r.json();
+    if (!j.results?.length) throw new Error('도시를 찾을 수 없습니다.');
+    const { latitude, longitude, name } = j.results[0];
+    await load(latitude, longitude, name);
+  } catch(e) { showErr(e.message); }
+}
+
+async function load(lat, lon, city) {
+  try {
+    showLoading();
+    const w = await fetchWeather(lat, lon);
+    curCond = getCondition(w.weather_code);
+    renderWeather(w, city);
+    renderContent();
+  } catch(e) { showErr('날씨를 불러오지 못했습니다: ' + e.message); }
+}
+
+// ══════════════════════════════════════════
+//  RENDER
+// ══════════════════════════════════════════
+function renderWeather(w, city) {
+  const d = DB[curCond];
+  document.body.className = d.cls;
+  hide('loading'); hide('err-box');
+
+  el('w-emoji').textContent = d.emoji;
+  el('w-loc').textContent   = '📍 ' + city;
+  el('w-temp').textContent  = Math.round(w.temperature_2m) + '°C';
+  el('w-desc').textContent  = d.name;
+  el('w-hum').textContent   = '💧 ' + w.relative_humidity_2m + '%';
+  el('w-wind').textContent  = '💨 ' + Math.round(w.wind_speed_10m) + 'km/h';
+  const now = new Date();
+  el('w-time').textContent  = now.getHours() + ':' + String(now.getMinutes()).padStart(2,'0') + ' 기준';
+  el('weather-card').style.display = 'flex';
+}
+
+function renderContent() {
+  const d = DB[curCond];
+
+  // Music
+  el('music-title').textContent  = d.music.title;
+  el('music-reason').textContent = d.music.reason;
+  el('yt-frame').src = `https://www.youtube-nocookie.com/embed/${d.music.yt}?rel=0&modestbranding=1`;
+  el('yt-link').href = `https://www.youtube.com/results?search_query=${encodeURIComponent(d.music.search)}`;
+  el('yt-link').textContent = '▶ "' + d.music.title + '" YouTube에서 검색';
+  show('music-card');
+
+  // Poem
+  el('poem-meta').textContent = d.poem.meta;
+  el('poem-text').textContent = d.poem.text;
+  show('poem-card');
+
+  // Painting
+  el('paint-img').src   = d.art.img;
+  el('paint-img').alt   = d.art.title;
+  el('paint-title').textContent = d.art.title;
+  el('paint-info').textContent  = d.art.info;
+  el('paint-desc').textContent  = d.art.desc;
+  show('paint-card');
+
+  // Places
+  el('place-grid').innerHTML = d.places.map(p => `
+    <div class="place-item">
+      <div class="place-icon">${p.i}</div>
+      <div class="place-name">${p.n}</div>
+      <div class="place-desc">${p.d}</div>
+    </div>`).join('');
+  show('place-card');
+
+  // Books
+  el('book-list').innerHTML = d.books.map(b => `
+    <div class="book-item">
+      <div class="book-title">📖 ${b.t}</div>
+      <div class="book-author">${b.a}</div>
+      <div class="book-reason">${b.r}</div>
+    </div>`).join('');
+  show('book-card');
+
+  // Jobs
+  show('job-card');
+  renderJobs();
+}
+
+function renderJobs() {
+  const job  = el('job-sel').value;
+  const acts = DB[curCond]?.jobs[job] || [];
+  el('job-list').innerHTML = acts.map(a => `<li>${a}</li>`).join('');
+}
+
+// ── Loading / Error ──────────────────────
+function showLoading() {
+  show('loading'); hide('err-box');
+  el('weather-card').style.display = 'none';
+  ['music-card','poem-card','paint-card','place-card','book-card','job-card']
+    .forEach(hide);
+}
+function showErr(msg) {
+  hide('loading');
+  el('err-box').style.display = 'block';
+  el('err-box').innerHTML = `<p>⚠️ ${msg}</p>
+    <button class="err-btn" onclick="load(37.5665,126.9780,'서울')">서울 날씨로 보기</button>`;
+}
+
+// ── Init ─────────────────────────────────
+window.addEventListener('load', getGeo);
+</script>
+</body>
+</html>
