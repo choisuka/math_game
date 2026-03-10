@@ -26,7 +26,6 @@
   }
 
   html, body {
-    height: 100%;
     background: var(--bg);
     color: var(--text);
     font-family: 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
@@ -56,33 +55,72 @@
     background-clip: text;
     letter-spacing: -.02em;
   }
-  .subtitle {
-    margin-top: .75rem;
-    color: var(--text2);
-    font-size: 1.05rem;
+  .subtitle { margin-top: .75rem; color: var(--text2); font-size: 1.05rem; }
+
+  /* ── Room entrance cards ── */
+  .rooms {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.25rem;
+    max-width: 900px;
+    margin: 0 auto 3rem;
+    padding: 0 1.5rem;
   }
+  .room-card {
+    background: var(--bg2);
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: var(--radius);
+    padding: 1.75rem 1.5rem;
+    text-decoration: none;
+    color: inherit;
+    text-align: center;
+    cursor: pointer;
+    transition: transform .2s, box-shadow .2s, border-color .2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .room-card:hover { transform: translateY(-5px); box-shadow: 0 20px 50px rgba(0,0,0,.5); }
+  .room-card .room-icon { font-size: 3rem; display: block; margin-bottom: .75rem; }
+  .room-card h2 { font-size: 1.3rem; font-weight: 800; margin-bottom: .4rem; }
+  .room-card .room-count { font-size: .82rem; color: var(--text2); }
+  .room-blue  { border-color: rgba(56,189,248,.25); }
+  .room-blue:hover  { border-color: rgba(56,189,248,.6); box-shadow: 0 20px 50px rgba(56,189,248,.15); }
+  .room-green { border-color: rgba(52,211,153,.25); }
+  .room-green:hover { border-color: rgba(52,211,153,.6); box-shadow: 0 20px 50px rgba(52,211,153,.15); }
+  .room-finn  { border-color: rgba(167,139,250,.25); }
+  .room-finn:hover  { border-color: rgba(167,139,250,.6); box-shadow: 0 20px 50px rgba(167,139,250,.15); }
+
+  /* ── Section heading ── */
+  .section-wrap { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem 4rem; }
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: .75rem;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+  .section-title span { font-size: 1.8rem; }
+  .section-title h2 { font-size: 1.4rem; font-weight: 800; }
 
   /* ── Game Grid ── */
   .games {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 1.5rem 3rem;
+    gap: 1.25rem;
   }
 
   .card {
     background: var(--bg2);
     border: 1px solid rgba(255,255,255,.07);
     border-radius: var(--radius);
-    padding: 2rem 1.75rem;
+    padding: 1.75rem 1.5rem;
     cursor: pointer;
     text-decoration: none;
     color: inherit;
     display: flex;
     flex-direction: column;
-    gap: .9rem;
+    gap: .75rem;
     position: relative;
     overflow: hidden;
     transition: transform .2s, box-shadow .2s, border-color .2s;
@@ -96,16 +134,28 @@
     transition: opacity .3s;
     pointer-events: none;
   }
-  .card:hover { transform: translateY(-6px); box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+  .card:hover { transform: translateY(-5px); box-shadow: 0 20px 60px rgba(0,0,0,.5); }
   .card:hover::before { opacity: 1; }
   .card:hover { border-color: var(--card-border); }
 
-  .card-1 { --card-glow: radial-gradient(ellipse at 0% 0%, rgba(56,189,248,.12), transparent 60%); --card-border: rgba(56,189,248,.5); }
-  .card-2 { --card-glow: radial-gradient(ellipse at 0% 0%, rgba(52,211,153,.12), transparent 60%); --card-border: rgba(52,211,153,.5); }
-  .card-3 { --card-glow: radial-gradient(ellipse at 0% 0%, rgba(167,139,250,.12), transparent 60%); --card-border: rgba(167,139,250,.5); }
-  .card-4 { --card-glow: radial-gradient(ellipse at 0% 0%, rgba(245,158,11,.12), transparent 60%); --card-border: rgba(245,158,11,.5); }
+  .card-1  { --card-glow: radial-gradient(ellipse at 0% 0%, rgba(56,189,248,.12),  transparent 60%); --card-border: rgba(56,189,248,.5); }
+  .card-2  { --card-glow: radial-gradient(ellipse at 0% 0%, rgba(52,211,153,.12),  transparent 60%); --card-border: rgba(52,211,153,.5); }
+  .card-3  { --card-glow: radial-gradient(ellipse at 0% 0%, rgba(167,139,250,.12), transparent 60%); --card-border: rgba(167,139,250,.5); }
+  .card-4  { --card-glow: radial-gradient(ellipse at 0% 0%, rgba(245,158,11,.12),  transparent 60%); --card-border: rgba(245,158,11,.5); }
+  .card-5  { --card-glow: radial-gradient(ellipse at 0% 0%, rgba(244,114,182,.12), transparent 60%); --card-border: rgba(244,114,182,.5); }
+  .card-6  { --card-glow: radial-gradient(ellipse at 0% 0%, rgba(45,212,191,.12),  transparent 60%); --card-border: rgba(45,212,191,.5); }
+  .card-12 { --card-glow: radial-gradient(ellipse at 0% 0%, rgba(249,115,22,.12),  transparent 60%); --card-border: rgba(249,115,22,.5); }
+  .card-13 { --card-glow: radial-gradient(ellipse at 0% 0%, rgba(37,99,235,.12),   transparent 60%); --card-border: rgba(37,99,235,.5); }
+  .card-14 { --card-glow: radial-gradient(ellipse at 0% 0%, rgba(13,148,136,.12),  transparent 60%); --card-border: rgba(13,148,136,.5); }
+  .card-15 { --card-glow: radial-gradient(ellipse at 0% 0%, rgba(124,58,237,.12),  transparent 60%); --card-border: rgba(124,58,237,.5); }
+  .card-16 { --card-glow: radial-gradient(ellipse at 0% 0%, rgba(59,130,246,.12),  transparent 60%); --card-border: rgba(59,130,246,.5); }
+  .card-17 { --card-glow: radial-gradient(ellipse at 0% 0%, rgba(16,185,129,.12),  transparent 60%); --card-border: rgba(16,185,129,.5); }
+  .card-18 { --card-glow: radial-gradient(ellipse at 0% 0%, rgba(217,119,6,.12),   transparent 60%); --card-border: rgba(217,119,6,.5); }
+  .card-19 { --card-glow: radial-gradient(ellipse at 0% 0%, rgba(30,64,175,.12),   transparent 60%); --card-border: rgba(30,64,175,.5); }
+  .card-20 { --card-glow: radial-gradient(ellipse at 0% 0%, rgba(109,40,217,.12),  transparent 60%); --card-border: rgba(109,40,217,.5); }
+  .card-21 { --card-glow: radial-gradient(ellipse at 0% 0%, rgba(15,118,110,.12),  transparent 60%); --card-border: rgba(15,118,110,.5); }
 
-  .card-icon { font-size: 3rem; line-height: 1; }
+  .card-icon { font-size: 2.8rem; line-height: 1; }
   .card-tag {
     display: inline-block;
     font-size: .7rem;
@@ -114,86 +164,83 @@
     text-transform: uppercase;
     padding: .2rem .6rem;
     border-radius: 100px;
-    margin-bottom: -.2rem;
   }
-  .tag-1 { background: rgba(56,189,248,.15); color: #38bdf8; }
-  .tag-2 { background: rgba(52,211,153,.15); color: #34d399; }
-  .tag-3 { background: rgba(167,139,250,.15); color: #a78bfa; }
-  .tag-4 { background: rgba(245,158,11,.15); color: #f59e0b; }
+  .tag-1  { background: rgba(56,189,248,.15);  color: #38bdf8; }
+  .tag-2  { background: rgba(52,211,153,.15);  color: #34d399; }
+  .tag-3  { background: rgba(167,139,250,.15); color: #a78bfa; }
+  .tag-4  { background: rgba(245,158,11,.15);  color: #f59e0b; }
+  .tag-5  { background: rgba(244,114,182,.15); color: #f472b6; }
+  .tag-6  { background: rgba(45,212,191,.15);  color: #2dd4bf; }
+  .tag-12 { background: rgba(249,115,22,.15);  color: #f97316; }
+  .tag-13 { background: rgba(37,99,235,.15);   color: #2563eb; }
+  .tag-14 { background: rgba(13,148,136,.15);  color: #0d9488; }
+  .tag-15 { background: rgba(124,58,237,.15);  color: #7c3aed; }
+  .tag-16 { background: rgba(59,130,246,.15);  color: #2563eb; }
+  .tag-17 { background: rgba(16,185,129,.15);  color: #059669; }
+  .tag-18 { background: rgba(217,119,6,.15);   color: #d97706; }
+  .tag-19 { background: rgba(30,64,175,.15);   color: #1e40af; }
+  .tag-20 { background: rgba(109,40,217,.15);  color: #6d28d9; }
+  .tag-21 { background: rgba(15,118,110,.15);  color: #0f766e; }
 
-  .card h2 { font-size: 1.4rem; font-weight: 800; line-height: 1.3; }
-  .card p { color: var(--text2); font-size: .9rem; line-height: 1.6; flex: 1; }
-
-  .card-meta {
+  .card-title-row {
     display: flex;
-    gap: .75rem;
-    flex-wrap: wrap;
+    align-items: center;
+    gap: .6rem;
+    overflow: hidden;
   }
+  .card h2 { font-size: 1.25rem; font-weight: 800; white-space: nowrap; }
+  .card p  { color: var(--text2); font-size: .88rem; line-height: 1.6; flex: 1; }
+
+  /* ── Marquee ── */
+  .marquee-wrap {
+    overflow: hidden;
+    flex: 1;
+    min-width: 0;
+  }
+  .marquee-inner {
+    display: inline-block;
+    white-space: nowrap;
+    animation: marquee 12s linear infinite;
+    font-size: .78rem;
+    color: var(--amber);
+    font-weight: 600;
+  }
+  @keyframes marquee {
+    0%   { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+  }
+
+  .card-meta { display: flex; gap: .6rem; flex-wrap: wrap; }
   .badge {
     font-size: .75rem;
-    padding: .2rem .65rem;
+    padding: .2rem .6rem;
     border-radius: 100px;
     background: var(--bg3);
     color: var(--text2);
     white-space: nowrap;
   }
-
-  .card-arrow {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: .25rem;
-  }
   .play-btn {
-    display: flex;
-    align-items: center;
-    gap: .4rem;
     font-size: .85rem;
     font-weight: 700;
-    color: var(--card-accent, var(--accent));
-    transition: gap .2s;
+    margin-top: .25rem;
   }
-  .card:hover .play-btn { gap: .7rem; }
-  .card-1 .play-btn { color: #38bdf8; }
-  .card-2 .play-btn { color: #34d399; }
-  .card-3 .play-btn { color: #a78bfa; }
-  .card-4 .play-btn { color: #f59e0b; }
-  .card-5 { --card-glow: radial-gradient(ellipse at 0% 0%, rgba(244,114,182,.12), transparent 60%); --card-border: rgba(244,114,182,.5); }
-  .card-5 .play-btn { color: #f472b6; }
-  .tag-5 { background: rgba(244,114,182,.15); color: #f472b6; }
-  .card-6 { --card-glow: radial-gradient(ellipse at 0% 0%, rgba(45,212,191,.12), transparent 60%); --card-border: rgba(45,212,191,.5); }
-  .card-6 .play-btn { color: #2dd4bf; }
-  .tag-6 { background: rgba(45,212,191,.15); color: #2dd4bf; }
-  .card-12 { --card-glow: radial-gradient(ellipse at 0% 0%, rgba(249,115,22,.12), transparent 60%); --card-border: rgba(249,115,22,.5); }
+  .card-1 .play-btn  { color: #38bdf8; }
+  .card-2 .play-btn  { color: #34d399; }
+  .card-3 .play-btn  { color: #a78bfa; }
+  .card-4 .play-btn  { color: #f59e0b; }
+  .card-5 .play-btn  { color: #f472b6; }
+  .card-6 .play-btn  { color: #2dd4bf; }
   .card-12 .play-btn { color: #f97316; }
-  .tag-12 { background: rgba(249,115,22,.15); color: #c2410c; }
-  .card-13 { --card-glow: radial-gradient(ellipse at 0% 0%, rgba(37,99,235,.12), transparent 60%); --card-border: rgba(37,99,235,.5); }
   .card-13 .play-btn { color: #2563eb; }
-  .tag-13 { background: rgba(37,99,235,.15); color: #1e40af; }
-  .card-14 { --card-glow: radial-gradient(ellipse at 0% 0%, rgba(13,148,136,.12), transparent 60%); --card-border: rgba(13,148,136,.5); }
   .card-14 .play-btn { color: #0d9488; }
-  .tag-14 { background: rgba(13,148,136,.15); color: #134e4a; }
-  .card-15 { --card-glow: radial-gradient(ellipse at 0% 0%, rgba(124,58,237,.12), transparent 60%); --card-border: rgba(124,58,237,.5); }
   .card-15 .play-btn { color: #7c3aed; }
-  .tag-15 { background: rgba(124,58,237,.15); color: #5b21b6; }
-  .card-16 { --card-glow: radial-gradient(ellipse at 0% 0%, rgba(59,130,246,.12), transparent 60%); --card-border: rgba(59,130,246,.5); }
   .card-16 .play-btn { color: #2563eb; }
-  .tag-16 { background: rgba(59,130,246,.15); color: #1e40af; }
-  .card-17 { --card-glow: radial-gradient(ellipse at 0% 0%, rgba(16,185,129,.12), transparent 60%); --card-border: rgba(16,185,129,.5); }
   .card-17 .play-btn { color: #059669; }
-  .tag-17 { background: rgba(16,185,129,.15); color: #065f46; }
-  .card-18 { --card-glow: radial-gradient(ellipse at 0% 0%, rgba(217,119,6,.12), transparent 60%); --card-border: rgba(217,119,6,.5); }
   .card-18 .play-btn { color: #d97706; }
-  .tag-18 { background: rgba(217,119,6,.15); color: #92400e; }
-  .card-19 { --card-glow: radial-gradient(ellipse at 0% 0%, rgba(30,64,175,.12), transparent 60%); --card-border: rgba(30,64,175,.5); }
   .card-19 .play-btn { color: #1e40af; }
-  .tag-19 { background: rgba(30,64,175,.15); color: #1e3a8a; }
-  .card-20 { --card-glow: radial-gradient(ellipse at 0% 0%, rgba(109,40,217,.12), transparent 60%); --card-border: rgba(109,40,217,.5); }
   .card-20 .play-btn { color: #6d28d9; }
-  .tag-20 { background: rgba(109,40,217,.15); color: #4c1d95; }
-  .card-21 { --card-glow: radial-gradient(ellipse at 0% 0%, rgba(15,118,110,.12), transparent 60%); --card-border: rgba(15,118,110,.5); }
   .card-21 .play-btn { color: #0f766e; }
-  .tag-21 { background: rgba(15,118,110,.15); color: #134e4a; }
+
   /* ── Install Banner ── */
   #install-banner {
     display: none;
@@ -205,7 +252,6 @@
     border: 1px solid rgba(56,189,248,.3);
     border-radius: 14px;
     padding: 1rem 1.5rem;
-    display: flex;
     align-items: center;
     gap: 1rem;
     box-shadow: 0 12px 40px rgba(0,0,0,.6);
@@ -244,15 +290,8 @@
   }
 
   /* ── Footer ── */
-  footer {
-    text-align: center;
-    padding: 1.5rem 1rem 3rem;
-    color: var(--text2);
-    font-size: .8rem;
-  }
-  footer a { color: var(--accent); text-decoration: none; }
+  footer { text-align: center; padding: 1.5rem 1rem 3rem; color: var(--text2); font-size: .8rem; }
 
-  /* ── PWA installed indicator ── */
   .pwa-badge {
     display: inline-flex;
     align-items: center;
@@ -276,255 +315,280 @@
   <div class="pwa-badge" id="pwa-badge">✓ 앱으로 설치됨</div>
 </header>
 
-<main class="games">
-
-  <a class="card card-1" href="games/math_kingdom.html">
-    <span class="card-tag tag-1">어드벤처</span>
-    <div class="card-icon">🏰</div>
-    <h2>수학 왕국</h2>
-    <p>마법사와 함께 수학 몬스터를 물리쳐라! RPG 스타일 사칙연산 배틀 게임.</p>
-    <div class="card-meta">
-      <span class="badge">🎮 Phaser 엔진</span>
-      <span class="badge">🔢 연산 · 수식</span>
-      <span class="badge">⭐ 초급~중급</span>
-    </div>
-    <div class="card-arrow">
-      <span class="play-btn">게임 시작 →</span>
-    </div>
+<!-- 방 3개 입구 -->
+<div class="rooms">
+  <a class="room-card room-blue" href="#explore">
+    <span class="room-icon">🎮</span>
+    <h2>수학탐험</h2>
+    <div class="room-count">게임 · 탐험 9개</div>
   </a>
-
-  <a class="card card-2" href="games/algebra.html">
-    <span class="card-tag tag-2">퀴즈</span>
-    <div class="card-icon">📐</div>
-    <h2>대수 탐험대</h2>
-    <p>문자와 식, 방정식, 등식의 성질, 일차부등식까지! 7챕터 × 10문제로 대수 완전 정복.</p>
-    <div class="card-meta">
-      <span class="badge">📚 7챕터</span>
-      <span class="badge">❓ 70문제</span>
-      <span class="badge">⭐ 중1~중2</span>
-    </div>
-    <div class="card-arrow">
-      <span class="play-btn">게임 시작 →</span>
-    </div>
+  <a class="room-card room-green" href="#middle">
+    <span class="room-icon">📚</span>
+    <h2>중등수학 방</h2>
+    <div class="room-count">교과 과정 5개</div>
   </a>
-
-  <a class="card card-3" href="games/detective.html">
-    <span class="card-tag tag-3">추리</span>
-    <div class="card-icon">🔍</div>
-    <h2>수학 탐정</h2>
-    <p>속력·비율·확률 사건을 해결하라! 개념 패널과 함께 수학 원리를 이해하며 풀어가는 추리 게임.</p>
-    <div class="card-meta">
-      <span class="badge">🕵️ 5케이스</span>
-      <span class="badge">💡 개념 설명</span>
-      <span class="badge">🔎 힌트 시스템</span>
-    </div>
-    <div class="card-arrow">
-      <span class="play-btn">게임 시작 →</span>
-    </div>
+  <a class="room-card room-finn" href="#finland">
+    <span class="room-icon">🇫🇮</span>
+    <h2>핀란드 방</h2>
+    <div class="room-count">핀란드 수학 2개</div>
   </a>
+</div>
 
-  <a class="card card-4" href="games/graph.html">
-    <span class="card-tag tag-4">그래프</span>
-    <div class="card-icon">📈</div>
-    <h2>그래프 탐험대</h2>
-    <p>좌표평면부터 일차함수까지! 캔버스로 직접 그리며 배우는 그래프 시각화 게임.</p>
-    <div class="card-meta">
-      <span class="badge">📍 좌표평면</span>
-      <span class="badge">📏 일차함수</span>
-      <span class="badge">🌀 반비례</span>
-    </div>
-    <div class="card-arrow">
-      <span class="play-btn">게임 시작 →</span>
-    </div>
-  </a>
+<!-- ───── 수학탐험 ───── -->
+<div class="section-wrap" id="explore">
+  <div class="section-title">
+    <span>🎮</span>
+    <h2>수학탐험</h2>
+  </div>
+  <div class="games">
 
-  <a class="card card-5" href="games/factor.html">
-    <span class="card-tag tag-5">중3</span>
-    <div class="card-icon">🪄</div>
-    <h2>수식 마법사</h2>
-    <p>곱셈공식과 인수분해를 마스터하라! 10챕터 80문제, SVG 시각화로 공식의 원리를 이해.</p>
-    <div class="card-meta">
-      <span class="badge">✨ 곱셈공식</span>
-      <span class="badge">🔮 인수분해</span>
-      <span class="badge">👑 10챕터</span>
-    </div>
-    <div class="card-arrow">
-      <span class="play-btn">게임 시작 →</span>
-    </div>
-  </a>
+    <a class="card card-1" href="games/math_kingdom.html">
+      <span class="card-tag tag-1">어드벤처</span>
+      <div class="card-icon">🏰</div>
+      <div class="card-title-row">
+        <h2>수학 왕국</h2>
+        <div class="marquee-wrap"><span class="marquee-inner">정수와 유리수 사칙연산게임&nbsp;&nbsp;✦&nbsp;&nbsp;정수와 유리수 사칙연산게임&nbsp;&nbsp;✦&nbsp;&nbsp;</span></div>
+      </div>
+      <p>마법사와 함께 수학 몬스터를 물리쳐라! RPG 스타일 사칙연산 배틀 게임.</p>
+      <div class="card-meta">
+        <span class="badge">🎮 Phaser 엔진</span>
+        <span class="badge">🔢 연산 · 수식</span>
+        <span class="badge">⭐ 초급~중급</span>
+      </div>
+      <div class="play-btn">게임 시작 →</div>
+    </a>
 
-  <a class="card card-6" href="games/sqrt.html">
-    <span class="card-tag tag-6">중3</span>
-    <div class="card-icon">√</div>
-    <h2>제곱근 탐험대</h2>
-    <p>제곱근의 뜻부터 혼합 계산까지! √(a²) 부호처리, 무리수, 근호의 사칙연산을 단계별로 정복.</p>
-    <div class="card-meta">
-      <span class="badge">🔢 6챕터</span>
-      <span class="badge">📐 60문제</span>
-      <span class="badge">⭐ 중3</span>
-    </div>
-    <div class="card-arrow">
-      <span class="play-btn">게임 시작 →</span>
-    </div>
-  </a>
+    <a class="card card-2" href="games/algebra.html">
+      <span class="card-tag tag-2">퀴즈</span>
+      <div class="card-icon">📐</div>
+      <h2>대수 탐험대</h2>
+      <p>문자와 식, 방정식, 등식의 성질, 일차부등식까지! 7챕터 × 10문제로 대수 완전 정복.</p>
+      <div class="card-meta">
+        <span class="badge">📚 7챕터</span>
+        <span class="badge">❓ 70문제</span>
+        <span class="badge">⭐ 중1~중2</span>
+      </div>
+      <div class="play-btn">게임 시작 →</div>
+    </a>
 
+    <a class="card card-3" href="games/detective.html">
+      <span class="card-tag tag-3">추리</span>
+      <div class="card-icon">🔍</div>
+      <div class="card-title-row">
+        <h2>수학 탐정</h2>
+        <div class="marquee-wrap"><span class="marquee-inner">방정식 활용&nbsp;&nbsp;✦&nbsp;&nbsp;방정식 활용&nbsp;&nbsp;✦&nbsp;&nbsp;</span></div>
+      </div>
+      <p>속력·비율·확률 사건을 해결하라! 개념 패널과 함께 수학 원리를 이해하며 풀어가는 추리 게임.</p>
+      <div class="card-meta">
+        <span class="badge">🕵️ 5케이스</span>
+        <span class="badge">💡 개념 설명</span>
+        <span class="badge">🔎 힌트 시스템</span>
+      </div>
+      <div class="play-btn">게임 시작 →</div>
+    </a>
 
-  <a class="card card-12" href="study/equation.html">
-    <span class="card-tag tag-12">중1</span>
-    <div class="card-icon">⚖️</div>
-    <h2>방정식의 본질</h2>
-    <p>방정식은 계산이 아니라 사고법! 균형 모델·5단계 프레임워크·활용문제 4개로 방정식의 진짜 의미를 익혀요.</p>
-    <div class="card-meta">
-      <span class="badge">⚖️ 균형 모델</span>
-      <span class="badge">📐 5단계 사고</span>
-      <span class="badge">🧩 활용 4문제</span>
-    </div>
-    <div class="card-arrow">
-      <span class="play-btn">학습 시작 →</span>
-    </div>
-  </a>
+    <a class="card card-4" href="games/graph.html">
+      <span class="card-tag tag-4">그래프</span>
+      <div class="card-icon">📈</div>
+      <h2>그래프 탐험대</h2>
+      <p>좌표평면부터 일차함수까지! 캔버스로 직접 그리며 배우는 그래프 시각화 게임.</p>
+      <div class="card-meta">
+        <span class="badge">📍 좌표평면</span>
+        <span class="badge">📏 일차함수</span>
+        <span class="badge">🌀 반비례</span>
+      </div>
+      <div class="play-btn">게임 시작 →</div>
+    </a>
 
-  <a class="card card-14" href="study/ratio.html">
-    <span class="card-tag tag-14">초5·6</span>
-    <div class="card-icon">📊</div>
-    <h2>비와 비율</h2>
-    <p>비·비율·백분율·비례식·비례배분 완전 정복! 실생활 문제와 심화 포함, 난이도 하·중·상 18개.</p>
-    <div class="card-meta">
-      <span class="badge">📊 비·비율</span>
-      <span class="badge">⚖️ 비례식</span>
-      <span class="badge">🔗 비례배분</span>
-    </div>
-    <div class="card-arrow">
-      <span class="play-btn">학습 시작 →</span>
-    </div>
-  </a>
+    <a class="card card-5" href="games/factor.html">
+      <span class="card-tag tag-5">중3</span>
+      <div class="card-icon">🪄</div>
+      <h2>수식 마법사</h2>
+      <p>곱셈공식과 인수분해를 마스터하라! 10챕터 80문제, SVG 시각화로 공식의 원리를 이해.</p>
+      <div class="card-meta">
+        <span class="badge">✨ 곱셈공식</span>
+        <span class="badge">🔮 인수분해</span>
+        <span class="badge">👑 10챕터</span>
+      </div>
+      <div class="play-btn">게임 시작 →</div>
+    </a>
 
-  <a class="card card-13" href="study/divisor.html">
-    <span class="card-tag tag-13">초5</span>
-    <div class="card-icon">🔢</div>
-    <h2>약수와 배수</h2>
-    <p>곱셈 짝으로 약수 찾기, 공통 나누기법으로 최대공약수·최소공배수 정복! 난이도 하·중·상 문제 18개.</p>
-    <div class="card-meta">
-      <span class="badge">🔢 약수·배수</span>
-      <span class="badge">📐 최대공약수</span>
-      <span class="badge">🔗 최소공배수</span>
-    </div>
-    <div class="card-arrow">
-      <span class="play-btn">학습 시작 →</span>
-    </div>
-  </a>
+    <a class="card card-6" href="games/sqrt.html">
+      <span class="card-tag tag-6">중3</span>
+      <div class="card-icon">√</div>
+      <h2>제곱근 탐험대</h2>
+      <p>제곱근의 뜻부터 혼합 계산까지! √(a²) 부호처리, 무리수, 근호의 사칙연산을 단계별로 정복.</p>
+      <div class="card-meta">
+        <span class="badge">🔢 6챕터</span>
+        <span class="badge">📐 60문제</span>
+        <span class="badge">⭐ 중3</span>
+      </div>
+      <div class="play-btn">게임 시작 →</div>
+    </a>
 
-  <a class="card card-15" href="study/poly_eq.html">
-    <span class="card-tag tag-15">고1</span>
-    <div class="card-icon">📊</div>
-    <h2>다항식과 방정식</h2>
-    <p>2022 강남구 고1 수학상 중간고사 핵심 유형 완전 분석. 나머지 정리·근과 계수의 관계·판별식 원리 중심 풀이.</p>
-    <div class="card-meta">
-      <span class="badge">🔑 나머지 정리</span>
-      <span class="badge">⚖️ 근과계수</span>
-      <span class="badge">🎯 판별식</span>
-    </div>
-    <div class="card-arrow">
-      <span class="play-btn">학습 시작 →</span>
-    </div>
-  </a>
+    <a class="card card-14" href="study/ratio.html">
+      <span class="card-tag tag-14">초5·6</span>
+      <div class="card-icon">📊</div>
+      <div class="card-title-row">
+        <h2>비와 비율</h2>
+        <div class="marquee-wrap"><span class="marquee-inner">할인한 물건사고 싶다&nbsp;&nbsp;✦&nbsp;&nbsp;할인한 물건사고 싶다&nbsp;&nbsp;✦&nbsp;&nbsp;</span></div>
+      </div>
+      <p>비·비율·백분율·비례식·비례배분 완전 정복! 실생활 문제와 심화 포함, 난이도 하·중·상 18개.</p>
+      <div class="card-meta">
+        <span class="badge">📊 비·비율</span>
+        <span class="badge">⚖️ 비례식</span>
+        <span class="badge">🔗 비례배분</span>
+      </div>
+      <div class="play-btn">학습 시작 →</div>
+    </a>
 
-  <a class="card card-16" href="study/middle1.html">
-    <span class="card-tag tag-16">중1</span>
-    <div class="card-icon">📐</div>
-    <h2>중1 수학 전 과정</h2>
-    <p>소인수분해부터 반비례까지. 중학교 1학년 수학 전 과정을 원리 중심으로 차근차근 설명합니다.</p>
-    <div class="card-meta">
-      <span class="badge">🔢 소인수분해</span>
-      <span class="badge">±정수·유리수</span>
-      <span class="badge">📏 일차방정식</span>
-    </div>
-    <div class="card-arrow">
-      <span class="play-btn">학습 시작 →</span>
-    </div>
-  </a>
+    <a class="card card-13" href="study/divisor.html">
+      <span class="card-tag tag-13">초5</span>
+      <div class="card-icon">🔢</div>
+      <h2>약수와 배수</h2>
+      <p>곱셈 짝으로 약수 찾기, 공통 나누기법으로 최대공약수·최소공배수 정복! 난이도 하·중·상 문제 18개.</p>
+      <div class="card-meta">
+        <span class="badge">🔢 약수·배수</span>
+        <span class="badge">📐 최대공약수</span>
+        <span class="badge">🔗 최소공배수</span>
+      </div>
+      <div class="play-btn">학습 시작 →</div>
+    </a>
 
-  <a class="card card-17" href="study/middle2.html">
-    <span class="card-tag tag-17">중2</span>
-    <div class="card-icon">📈</div>
-    <h2>중2 수학 전 과정</h2>
-    <p>순환소수·식의계산부터 연립방정식·일차함수·확률까지. 중2 핵심 개념을 원리부터 이해합니다.</p>
-    <div class="card-meta">
-      <span class="badge">∞ 순환소수</span>
-      <span class="badge">📊 연립방정식</span>
-      <span class="badge">🎲 확률</span>
-    </div>
-    <div class="card-arrow">
-      <span class="play-btn">학습 시작 →</span>
-    </div>
-  </a>
+    <a class="card card-12" href="study/equation.html">
+      <span class="card-tag tag-12">중1</span>
+      <div class="card-icon">⚖️</div>
+      <div class="card-title-row">
+        <h2>방정식의 본질</h2>
+        <div class="marquee-wrap"><span class="marquee-inner">두개의 양이 같다&nbsp;&nbsp;✦&nbsp;&nbsp;두개의 양이 같다&nbsp;&nbsp;✦&nbsp;&nbsp;</span></div>
+      </div>
+      <p>방정식은 계산이 아니라 사고법! 균형 모델·5단계 프레임워크·활용문제 4개로 방정식의 진짜 의미를 익혀요.</p>
+      <div class="card-meta">
+        <span class="badge">⚖️ 균형 모델</span>
+        <span class="badge">📐 5단계 사고</span>
+        <span class="badge">🧩 활용 4문제</span>
+      </div>
+      <div class="play-btn">학습 시작 →</div>
+    </a>
 
-  <a class="card card-18" href="study/middle3.html">
-    <span class="card-tag tag-18">중3</span>
-    <div class="card-icon">√</div>
-    <h2>중3 수학 전 과정</h2>
-    <p>제곱근·인수분해·이차방정식·이차함수·삼각비·통계까지. 중3 전 과정 원리 중심 완전 정리.</p>
-    <div class="card-meta">
-      <span class="badge">√ 제곱근</span>
-      <span class="badge">² 이차방정식</span>
-      <span class="badge">📐 삼각비</span>
-    </div>
-    <div class="card-arrow">
-      <span class="play-btn">학습 시작 →</span>
-    </div>
-  </a>
+  </div>
+</div>
 
-  <a class="card card-19" href="study/finland.html">
-    <span class="card-tag tag-19">🇫🇮 핀란드</span>
-    <div class="card-icon">🌲</div>
-    <h2>핀란드 중등 수학</h2>
-    <p>세계 최고 수학 교육의 비결. 탐구·연결·이해를 중심으로 7~9학년 전 과정을 실생활 맥락과 함께 원리부터 설명합니다.</p>
-    <div class="card-meta">
-      <span class="badge">🔍 탐구 중심</span>
-      <span class="badge">🌍 실생활 수학</span>
-      <span class="badge">💡 원리 이해</span>
-    </div>
-    <div class="card-arrow">
-      <span class="play-btn">학습 시작 →</span>
-    </div>
-  </a>
+<!-- ───── 중등수학 방 ───── -->
+<div class="section-wrap" id="middle">
+  <div class="section-title">
+    <span>📚</span>
+    <h2>중등수학 방</h2>
+  </div>
+  <div class="games">
 
-  <a class="card card-20" href="study/korea_prob.html">
-    <span class="card-tag tag-20">🇰🇷 한국 문제</span>
-    <div class="card-icon">📐</div>
-    <h2>한국 중등 수학 문제풀이</h2>
-    <p>한국 교과서의 중난이도 문제를 핀란드식 "왜?" 중심으로 풀어냅니다. 연속수·나이·속력·농도·도형 등 14가지 유형을 단계별로 해설합니다.</p>
-    <div class="card-meta">
-      <span class="badge">🔢 14가지 유형</span>
-      <span class="badge">💡 핀란드식 해설</span>
-      <span class="badge">✅ 추가 연습문제</span>
-    </div>
-    <div class="card-arrow">
-      <span class="play-btn">학습 시작 →</span>
-    </div>
-  </a>
+    <a class="card card-16" href="study/middle1.html">
+      <span class="card-tag tag-16">중1</span>
+      <div class="card-icon">📐</div>
+      <h2>중1 수학 전 과정</h2>
+      <p>소인수분해부터 반비례까지. 중학교 1학년 수학 전 과정을 원리 중심으로 차근차근 설명합니다.</p>
+      <div class="card-meta">
+        <span class="badge">🔢 소인수분해</span>
+        <span class="badge">±정수·유리수</span>
+        <span class="badge">📏 일차방정식</span>
+      </div>
+      <div class="play-btn">학습 시작 →</div>
+    </a>
 
-  <a class="card card-21" href="study/finland_adv.html">
-    <span class="card-tag tag-21">🇫🇮 핀란드 심화</span>
-    <div class="card-icon">🔬</div>
-    <h2>핀란드 수학 심화과정</h2>
-    <p>핀란드 교과서 심화 영역: 수론·조합·기하증명·함수분석·통계추론. "왜 성립하는가?"를 논리적으로 확정해 나가는 고급 탐구 과정입니다.</p>
-    <div class="card-meta">
-      <span class="badge">🔍 증명 중심</span>
-      <span class="badge">📊 심화 통계</span>
-      <span class="badge">🧩 조합·수론</span>
-    </div>
-    <div class="card-arrow">
-      <span class="play-btn">학습 시작 →</span>
-    </div>
-  </a>
+    <a class="card card-17" href="study/middle2.html">
+      <span class="card-tag tag-17">중2</span>
+      <div class="card-icon">📈</div>
+      <h2>중2 수학 전 과정</h2>
+      <p>순환소수·식의계산부터 연립방정식·일차함수·확률까지. 중2 핵심 개념을 원리부터 이해합니다.</p>
+      <div class="card-meta">
+        <span class="badge">∞ 순환소수</span>
+        <span class="badge">📊 연립방정식</span>
+        <span class="badge">🎲 확률</span>
+      </div>
+      <div class="play-btn">학습 시작 →</div>
+    </a>
 
+    <a class="card card-18" href="study/middle3.html">
+      <span class="card-tag tag-18">중3</span>
+      <div class="card-icon">√</div>
+      <h2>중3 수학 전 과정</h2>
+      <p>제곱근·인수분해·이차방정식·이차함수·삼각비·통계까지. 중3 전 과정 원리 중심 완전 정리.</p>
+      <div class="card-meta">
+        <span class="badge">√ 제곱근</span>
+        <span class="badge">² 이차방정식</span>
+        <span class="badge">📐 삼각비</span>
+      </div>
+      <div class="play-btn">학습 시작 →</div>
+    </a>
 
-</main>
+    <a class="card card-20" href="study/korea_prob.html">
+      <span class="card-tag tag-20">🇰🇷 한국 문제</span>
+      <div class="card-icon">📐</div>
+      <h2>한국 중등 수학 문제풀이</h2>
+      <p>한국 교과서의 중난이도 문제를 핀란드식 "왜?" 중심으로 풀어냅니다. 14가지 유형을 단계별로 해설합니다.</p>
+      <div class="card-meta">
+        <span class="badge">🔢 14가지 유형</span>
+        <span class="badge">💡 핀란드식 해설</span>
+        <span class="badge">✅ 추가 연습문제</span>
+      </div>
+      <div class="play-btn">학습 시작 →</div>
+    </a>
+
+    <a class="card card-15" href="study/poly_eq.html">
+      <span class="card-tag tag-15">고1</span>
+      <div class="card-icon">📊</div>
+      <h2>다항식과 방정식</h2>
+      <p>2022 강남구 고1 수학상 중간고사 핵심 유형 완전 분석. 나머지 정리·근과 계수의 관계·판별식 원리 중심 풀이.</p>
+      <div class="card-meta">
+        <span class="badge">🔑 나머지 정리</span>
+        <span class="badge">⚖️ 근과계수</span>
+        <span class="badge">🎯 판별식</span>
+      </div>
+      <div class="play-btn">학습 시작 →</div>
+    </a>
+
+  </div>
+</div>
+
+<!-- ───── 핀란드 방 ───── -->
+<div class="section-wrap" id="finland">
+  <div class="section-title">
+    <span>🇫🇮</span>
+    <h2>핀란드 방</h2>
+  </div>
+  <div class="games">
+
+    <a class="card card-19" href="study/finland.html">
+      <span class="card-tag tag-19">🇫🇮 핀란드</span>
+      <div class="card-icon">🌲</div>
+      <h2>핀란드 중등 수학</h2>
+      <p>세계 최고 수학 교육의 비결. 탐구·연결·이해를 중심으로 7~9학년 전 과정을 실생활 맥락과 함께 원리부터 설명합니다.</p>
+      <div class="card-meta">
+        <span class="badge">🔍 탐구 중심</span>
+        <span class="badge">🌍 실생활 수학</span>
+        <span class="badge">💡 원리 이해</span>
+      </div>
+      <div class="play-btn">학습 시작 →</div>
+    </a>
+
+    <a class="card card-21" href="study/finland_adv.html">
+      <span class="card-tag tag-21">🇫🇮 핀란드 심화</span>
+      <div class="card-icon">🔬</div>
+      <h2>핀란드 수학 심화과정</h2>
+      <p>핀란드 교과서 심화 영역: 수론·조합·기하증명·함수분석·통계추론. "왜 성립하는가?"를 논리적으로 확정해 나가는 고급 탐구 과정입니다.</p>
+      <div class="card-meta">
+        <span class="badge">🔍 증명 중심</span>
+        <span class="badge">📊 심화 통계</span>
+        <span class="badge">🧩 조합·수론</span>
+      </div>
+      <div class="play-btn">학습 시작 →</div>
+    </a>
+
+  </div>
+</div>
 
 <footer>
   <p>수학여행학원-영통 · 중학교 수학 학습 플랫폼</p>
-  <p style="margin-top:.4rem"><a href="https://play.google.com/store" style="display:none" id="play-link">Google Play에서 설치</a></p>
 </footer>
 
 <!-- Install Banner -->
@@ -539,7 +603,6 @@
 </div>
 
 <script>
-// ── Service Worker Registration ──
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js')
@@ -548,7 +611,6 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// ── PWA Install Prompt ──
 let deferredPrompt = null;
 const banner = document.getElementById('install-banner');
 const installBtn = document.getElementById('install-btn');
@@ -577,7 +639,6 @@ closeBtn.addEventListener('click', () => {
   banner.style.display = 'none';
 });
 
-// ── Detect if already installed as PWA ──
 if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
   document.getElementById('pwa-badge').classList.add('show');
 }
