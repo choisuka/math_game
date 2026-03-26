@@ -246,7 +246,10 @@ const GRADES=[
   {g:4,emoji:'⭐',name:'4학년',desc:'세 자리 계산 · 분수 · 소수 · 넓이'},
   {g:5,emoji:'🌟',name:'5학년',desc:'분수 곱나눗셈 · 퍼센트 · 음수'},
   {g:6,emoji:'✨',name:'6학년',desc:'비율 · 방정식 · 통계 · 비례'},
-  {g:7,emoji:'🔢',name:'중1 — 정수·유리수',desc:'정수 연산 · 유리수 계산 · 부호 규칙'}
+  {g:7,emoji:'🔢',name:'중1 — 정수·유리수',desc:'정수 연산 · 유리수 계산 · 부호 규칙'},
+  {g:8,emoji:'📐',name:'중1 — 문자와 식·방정식',desc:'문자식 · 일차식 계산 · 일차방정식'},
+  {g:9,emoji:'📈',name:'중2 — 함수·연립방정식',desc:'일차함수 · 연립방정식 · 부등식'},
+  {g:10,emoji:'🌀',name:'중3 — 이차방정식·통계',desc:'이차방정식 · 이차함수 · 확률'}
 ];
 const TOPICS={
   1:[
@@ -291,6 +294,27 @@ const TOPICS={
     {id:'rat7a',emoji:'½',name:'유리수 덧셈·뺄셈',desc:'통분→계산→약분. LCM 활용',tag:'유리수',gen:'G7rata'},
     {id:'rat7m',emoji:'➗',name:'유리수 곱셈·나눗셈',desc:'역수 개념 — a÷b = a×(1/b)',tag:'유리수',gen:'G7ratm'},
     {id:'mix7', emoji:'🧮',name:'혼합 연산',desc:'정수·유리수 섞인 종합 문제',tag:'종합',gen:'G7mix'}
+  ],
+  8:[
+    {id:'alg8a',emoji:'🔡',name:'문자식 계산',desc:'동류항 정리 · 계수 · 단항식×다항식',tag:'문자와 식',gen:'G8alga'},
+    {id:'alg8b',emoji:'📦',name:'일차식 덧셈·뺄셈',desc:'괄호 풀기 · 동류항 합치기',tag:'문자와 식',gen:'G8algb'},
+    {id:'eq8a', emoji:'⚖️',name:'일차방정식 풀기',desc:'이항 · 양변 나누기 · 해 구하기',tag:'방정식',gen:'G8eqa'},
+    {id:'eq8b', emoji:'📝',name:'방정식 활용',desc:'나이·거리·가격 문제를 x로 세우기',tag:'방정식 활용',gen:'G8eqb'},
+    {id:'mix8', emoji:'🧮',name:'종합 문제',desc:'문자식 + 방정식 혼합',tag:'종합',gen:'G8mix'}
+  ],
+  9:[
+    {id:'fn9a', emoji:'📈',name:'일차함수 기울기·절편',desc:'y=ax+b — 기울기와 y절편 구하기',tag:'함수',gen:'G9fna'},
+    {id:'fn9b', emoji:'✏️',name:'일차함수 식 구하기',desc:'두 점 또는 기울기+한 점으로 식 결정',tag:'함수',gen:'G9fnb'},
+    {id:'sys9a',emoji:'🔗',name:'연립방정식 풀기',desc:'가감법 · 대입법으로 x,y 구하기',tag:'연립방정식',gen:'G9sysa'},
+    {id:'ineq9',emoji:'⚡',name:'일차부등식',desc:'부등호 방향 · 해 구하기 · 수직선',tag:'부등식',gen:'G9ineq'},
+    {id:'mix9', emoji:'🧮',name:'종합 문제',desc:'함수 + 연립방정식 + 부등식',tag:'종합',gen:'G9mix'}
+  ],
+  10:[
+    {id:'qa10a',emoji:'🌀',name:'이차방정식 인수분해',desc:'(x+a)(x+b)=0 형태로 풀기',tag:'이차방정식',gen:'G10qaa'},
+    {id:'qa10b',emoji:'📐',name:'이차방정식 근의 공식',desc:'x=(−b±√D)/2a 적용하기',tag:'이차방정식',gen:'G10qab'},
+    {id:'qf10a',emoji:'🏔️',name:'이차함수 꼭짓점',desc:'y=a(x−p)²+q — 꼭짓점·축 구하기',tag:'이차함수',gen:'G10qfa'},
+    {id:'prob10',emoji:'🎲',name:'확률 계산',desc:'경우의 수 · 확률 · 여사건',tag:'확률',gen:'G10prob'},
+    {id:'mix10',emoji:'🧮',name:'종합 문제',desc:'이차방정식 + 이차함수 + 확률',tag:'종합',gen:'G10mix'}
   ]
 };
 
@@ -758,6 +782,166 @@ function G7mix(){
   return pick(fns)();
 }
 function gcd7(a,b){a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b];}return a;}
+
+// ══════════════════════════════════════════
+//  중1 — 문자와 식·방정식 (G8)
+// ══════════════════════════════════════════
+function G8alga(){
+  const a=rnd(2,9),b=rnd(2,9),c=rnd(2,9),d=rnd(2,9);
+  const types=rnd(1,3);
+  if(types===1){
+    const ans=a+c;
+    return{ctx:'',q:`${a}x + ${b} + ${c}x + ${d} 를 간단히 하면?`,vis:'',
+      choices:shuf([`${ans}x+${b+d}`,`${ans}x+${b-d}`,`${a+d}x+${b+c}`,`${ans+1}x+${b+d}`]),
+      ans:`${ans}x+${b+d}`,explain:`(${a}+${c})x+(${b}+${d})=${ans}x+${b+d}`};
+  }
+  if(types===2){
+    const ans=a-c; const ansc=b+d;
+    return{ctx:'',q:`${a}x + ${b} − ${c}x + ${d} 를 간단히 하면?`,vis:'',
+      choices:shuf([`${ans}x+${ansc}`,`${ans+1}x+${ansc}`,`${a+c}x+${ansc}`,`${ans}x+${ansc+1}`]),
+      ans:`${ans}x+${ansc}`,explain:`(${a}-${c})x+(${b}+${d})=${ans}x+${ansc}`};
+  }
+  const k=rnd(2,5);
+  const r1=k*a, r2=k*b;
+  return{ctx:'',q:`${k}(${a}x + ${b}) 를 전개하면?`,vis:'',
+    choices:shuf([`${r1}x+${r2}`,`${r1}x+${b}`,`${a}x+${r2}`,`${r1+1}x+${r2}`]),
+    ans:`${r1}x+${r2}`,explain:`${k}×${a}x+${k}×${b}=${r1}x+${r2}`};
+}
+function G8algb(){
+  const a=rnd(2,7),b=rnd(1,9),c=rnd(2,7),d=rnd(1,9);
+  const ans1=a+c, ans2=b+d;
+  return{ctx:'',q:`(${a}x+${b}) + (${c}x+${d}) 를 계산하면?`,vis:'',
+    choices:shuf([`${ans1}x+${ans2}`,`${ans1}x+${b-d}`,`${a-c>0?a-c:c-a}x+${ans2}`,`${ans1+1}x+${ans2}`]),
+    ans:`${ans1}x+${ans2}`,explain:`(${a}+${c})x+(${b}+${d})=${ans1}x+${ans2}`};
+}
+function G8eqa(){
+  const a=rnd(2,9), b=rnd(1,20), ans=rnd(1,10);
+  const c=a*ans+b;
+  return{ctx:'',q:`${a}x + ${b} = ${c} 일 때 x = ?`,vis:'',
+    choices:shuf([String(ans),String(ans+1),String(ans-1),String(ans+2)]),
+    ans:String(ans),explain:`${a}x=${c}-${b}=${c-b}, x=${ans}`};
+}
+function G8eqb(){
+  const ans=rnd(5,20);
+  const types=rnd(1,3);
+  if(types===1){
+    const older=ans+rnd(3,15);
+    return{ctx:`아들 나이는 ${ans}세, 아버지 나이는 ${older}세입니다.`,
+      q:`아들 나이의 3배에서 아버지 나이를 빼면?`,vis:'',
+      choices:shuf([String(ans*3-older),String(ans*3-older+1),String(ans*2-older),String(ans*3+older)]),
+      ans:String(ans*3-older),explain:`${ans}×3−${older}=${ans*3-older}`};
+  }
+  if(types===2){
+    const price=rnd(200,800)*10;
+    const n=rnd(3,8);
+    const total=price*n;
+    return{ctx:`한 개에 ${price}원인 빵 ${n}개를 샀습니다.`,
+      q:`총 금액은 얼마인가요?`,vis:'',
+      choices:shuf([String(total),String(total+price),String(total-price),String(price*(n+1))]),
+      ans:String(total),explain:`${price}×${n}=${total}원`};
+  }
+  const spd=rnd(3,8)*10, time=rnd(2,5);
+  return{ctx:`시속 ${spd}km로 ${time}시간 달렸습니다.`,
+    q:`이동한 거리는 몇 km인가요?`,vis:'',
+    choices:shuf([String(spd*time),String(spd*(time+1)),String(spd*(time-1)),String(spd+time)]),
+    ans:String(spd*time),explain:`${spd}×${time}=${spd*time}km`};
+}
+function G8mix(){return pick([G8alga,G8algb,G8eqa,G8eqb])();}
+
+// ══════════════════════════════════════════
+//  중2 — 일차함수·연립방정식·부등식 (G9)
+// ══════════════════════════════════════════
+function G9fna(){
+  const a=pick([-3,-2,-1,1,2,3]), b=rnd(-5,5);
+  const x=rnd(1,5);
+  const y=a*x+b;
+  return{ctx:`일차함수 y = ${a>0?a:a}x ${b>=0?'+'+b:b}`,
+    q:`x = ${x} 일 때 y의 값은?`,vis:'',
+    choices:shuf([String(y),String(y+1),String(y-1),String(y+2)]),
+    ans:String(y),explain:`y=${a}×${x}${b>=0?'+'+b:b}=${y}`};
+}
+function G9fnb(){
+  const a=pick([1,2,3,-1,-2]), b=rnd(-4,4);
+  const x1=rnd(0,3), y1=a*x1+b;
+  const x2=x1+rnd(1,3), y2=a*x2+b;
+  return{ctx:`두 점 (${x1},${y1})과 (${x2},${y2})를 지나는 일차함수`,
+    q:`기울기는?`,vis:'',
+    choices:shuf([String(a),String(a+1),String(a-1),String(-a)]),
+    ans:String(a),explain:`기울기=(${y2}-${y1})/(${x2}-${x1})=${y2-y1}/${x2-x1}=${a}`};
+}
+function G9sysa(){
+  const x=rnd(1,7), y=rnd(1,7);
+  const a1=rnd(1,4),b1=rnd(1,4),a2=rnd(1,4),b2=rnd(1,4);
+  const c1=a1*x+b1*y, c2=a2*x+b2*y;
+  const types=rnd(1,2);
+  if(types===1){
+    return{ctx:`연립방정식: ${a1}x+${b1}y=${c1} / ${a2}x+${b2}y=${c2}`,
+      q:`x의 값은?`,vis:'',
+      choices:shuf([String(x),String(x+1),String(y),String(x+2)]),
+      ans:String(x),explain:`연립 풀면 x=${x}, y=${y}`};
+  }
+  return{ctx:`연립방정식: ${a1}x+${b1}y=${c1} / ${a2}x+${b2}y=${c2}`,
+    q:`y의 값은?`,vis:'',
+    choices:shuf([String(y),String(y+1),String(x),String(y-1)]),
+    ans:String(y),explain:`연립 풀면 x=${x}, y=${y}`};
+}
+function G9ineq(){
+  const a=rnd(2,7), b=rnd(1,20), ans=rnd(1,10);
+  const c=a*ans+b;
+  return{ctx:'',q:`${a}x + ${b} < ${c} 를 만족하는 가장 큰 정수 x는?`,vis:'',
+    choices:shuf([String(ans-1),String(ans),String(ans+1),String(ans-2)]),
+    ans:String(ans-1),explain:`${a}x<${c-b}, x<${ans} → 가장 큰 정수=${ans-1}`};
+}
+function G9mix(){return pick([G9fna,G9fnb,G9sysa,G9ineq])();}
+
+// ══════════════════════════════════════════
+//  중3 — 이차방정식·이차함수·확률 (G10)
+// ══════════════════════════════════════════
+function G10qaa(){
+  const r1=rnd(1,7), r2=rnd(1,7);
+  const b=-(r1+r2), c=r1*r2;
+  const bStr=b>=0?'+'+b:String(b);
+  const cStr=c>=0?'+'+c:String(c);
+  return{ctx:'',q:`x² ${bStr}x ${cStr} = 0 의 해는?`,vis:'',
+    choices:shuf([`x=${r1} 또는 x=${r2}`,`x=${r1+1} 또는 x=${r2}`,`x=−${r1} 또는 x=−${r2}`,`x=${r1} 또는 x=${r2+1}`]),
+    ans:`x=${r1} 또는 x=${r2}`,explain:`(x-${r1})(x-${r2})=0 → x=${r1} 또는 x=${r2}`};
+}
+function G10qab(){
+  const r1=rnd(1,5), r2=rnd(1,5);
+  const b=-(r1+r2), c=r1*r2;
+  const D=b*b-4*c;
+  const bStr=b>=0?'+'+b:String(b);
+  const cStr=c>=0?'+'+c:String(c);
+  return{ctx:'',q:`x² ${bStr}x ${cStr} = 0 에서 판별식 D = ?`,vis:'',
+    choices:shuf([String(D),String(D+4),String(D-4),String(D+1)]),
+    ans:String(D),explain:`D=b²−4ac=${b*b}−${4*c}=${D}`};
+}
+function G10qfa(){
+  const p=rnd(-4,4), q=rnd(-5,5), a=pick([1,2,-1,-2]);
+  const aStr=a===1?'':a===-1?'−':String(a);
+  const pStr=p===0?'x':(p>0?`(x−${p})`:`(x+${-p})`);
+  const qStr=q===0?'':(q>0?`+${q}`:String(q));
+  return{ctx:`이차함수 y = ${aStr}${pStr}²${qStr}`,
+    q:`꼭짓점의 좌표는?`,vis:'',
+    choices:shuf([`(${p}, ${q})`,`(${-p}, ${q})`,`(${p}, ${-q})`,`(${p+1}, ${q})`]),
+    ans:`(${p}, ${q})`,explain:`표준형 y=a(x−p)²+q에서 꼭짓점=(p,q)=(${p},${q})`};
+}
+function G10prob(){
+  const total=rnd(5,10), red=rnd(1,total-1), blue=total-red;
+  const types=rnd(1,2);
+  if(types===1){
+    return{ctx:`주머니에 빨간 공 ${red}개, 파란 공 ${blue}개가 있습니다.`,
+      q:`한 개를 꺼낼 때 빨간 공일 확률은? (분수로)`,vis:'',
+      choices:shuf([`${red}/${total}`,`${blue}/${total}`,`${red}/${blue}`,`1/${red}`]),
+      ans:`${red}/${total}`,explain:`P(빨간)=${red}/${total}`};
+  }
+  const p=red, pStr=`${p}/${total}`;
+  return{ctx:`어떤 사건이 일어날 확률이 ${pStr}입니다.`,
+    q:`이 사건이 일어나지 않을 확률은?`,vis:'',
+    choices:shuf([`${total-p}/${total}`,`${p}/${total}`,`1/${p}`,`${p-1}/${total}`]),
+    ans:`${total-p}/${total}`,explain:`여사건 확률=1−${pStr}=${total-p}/${total}`};
+}
+function G10mix(){return pick([G10qaa,G10qab,G10qfa,G10prob])();}
 
 // ══════════════════════════════════════════
 //  Enter 키
