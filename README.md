@@ -35,3 +35,7 @@ https://choisuka.github.io/
 | 수학왕국 (초등게임) | https://choisuka.github.io/math-games-kingdom/ | 초등 드릴 게임 |
 | 수학 탐정 수사국 | https://choisuka.github.io/detective_math/ | 방정식 활용 |
 | 마법학교 중등형 | https://choisuka.github.io/algebra_game/ | 중등 대수 |
+
+## 개발 정보
+- 로컬 폴더: `C:/Users/USER/math_game`
+- GitHub 레포: `choisuka/math_game`
